@@ -1,0 +1,189 @@
+// Copied and pasted from terminal
+
+Last login: Mon Mar  8 10:31:13 on ttys000
+(base) Liams-MacBook-Pro-2:~ liam$ docker login -u
+flag needs an argument: 'u' in -u
+(base) Liams-MacBook-Pro-2:~ liam$ docker login -u liamchis
+Password: 
+Login Succeeded
+(base) Liams-MacBook-Pro-2:~ liam$ docker run -d -p 80:80 docker/getting-started
+(base) Liams-MacBook-Pro-2:~ liam$ git clone https://github.com/openmhealth/shimmer.git omh-clone
+fatal: destination path 'omh-clone' already exists and is not an empty directory.
+(base) Liams-MacBook-Pro-2:~ liam$ docker-compose up -d
+ERROR: 
+        Can't find a suitable configuration file in this directory or any
+        parent. Are you in the right directory?
+
+        Supported filenames: docker-compose.yml, docker-compose.yaml
+
+(base) Liams-MacBook-Pro-2:~ liam$ docker image ls
+REPOSITORY                           TAG                                                     IMAGE ID       CREATED         SIZE
+docker/desktop-kubernetes            kubernetes-v1.19.3-cni-v0.8.5-critools-v1.17.0-debian   bb2106081d17   3 months ago    285MB
+k8s.gcr.io/kube-proxy                v1.19.3                                                 cdef7632a242   4 months ago    118MB
+k8s.gcr.io/kube-controller-manager   v1.19.3                                                 9b60aca1d818   4 months ago    111MB
+k8s.gcr.io/kube-apiserver            v1.19.3                                                 a301be0cd44b   4 months ago    119MB
+k8s.gcr.io/kube-scheduler            v1.19.3                                                 aaefbfa906bd   4 months ago    45.7MB
+k8s.gcr.io/etcd                      3.4.13-0                                                0369cf4303ff   6 months ago    253MB
+k8s.gcr.io/coredns                   1.7.0                                                   bfe3a36ebd25   8 months ago    45.2MB
+docker/getting-started               latest                                                  3c156928aeec   10 months ago   24.8MB
+docker/desktop-storage-provisioner   v1.1                                                    e704287ce753   11 months ago   41.8MB
+docker/desktop-vpnkit-controller     v1.0                                                    79da37e5a3aa   12 months ago   36.6MB
+k8s.gcr.io/pause                     3.2                                                     80d28bedfe5d   12 months ago   683kB
+(base) Liams-MacBook-Pro-2:~ liam$ docker pull openmhealth/shimmer-resource-server
+Using default tag: latest
+latest: Pulling from openmhealth/shimmer-resource-server
+6d987f6f4279: Pull complete 
+013dbd5feb01: Pull complete 
+9d5b23feead7: Pull complete 
+4aabb965ef26: Pull complete 
+e71f4ce0f723: Pull complete 
+Digest: sha256:c70a36fb508c86facb28049a3a6c65ad866c694c9ce97caff859b890bbde6799
+Status: Downloaded newer image for openmhealth/shimmer-resource-server:latest
+docker.io/openmhealth/shimmer-resource-server:latest
+(base) Liams-MacBook-Pro-2:~ liam$ docker-compose up -d
+ERROR: 
+        Can't find a suitable configuration file in this directory or any
+        parent. Are you in the right directory?
+
+        Supported filenames: docker-compose.yml, docker-compose.yaml
+        
+(base) Liams-MacBook-Pro-2:~ liam$ docker run -it --rm=true openmhealth/shimmer-resource-server /bin/bash
+docker: Error response from daemon: OCI runtime create failed: container_linux.go:370: starting container process caused: exec: "/bin/bash": stat /bin/bash: no such file or directory: unknown.
+
+
+// From here, Nana helped resolve the problems I was having
+
+(base) Liams-MacBook-Pro-2:~ liam$ ls
+Applications		Documents		Library			Music			OpenmHealthClone	Public			getting-started		openmhealth
+Desktop			Downloads		Movies			OmH-Clone		Pictures		clone-omh		lc-omh			shimmer
+
+// Here we were able to see that I was not operating from shimmer so wasn't able to access the images/containers that I was trying to pull
+
+(base) Liams-MacBook-Pro-2:~ liam$ cd shimmer
+
+// Now in shimmer
+// below code pulls OmH stuff to dicker
+
+(base) Liams-MacBook-Pro-2:shimmer liam$ docker-compose up -d resourceserver
+Pulling mongo (mongo:)...
+latest: Pulling from library/mongo
+92dc2a97ff99: Pull complete
+be13a9d27eb8: Pull complete
+c8299583700a: Pull complete
+f61ed17142e4: Pull complete
+bed7676d225b: Pull complete
+ba553bcfc69c: Pull complete
+e5046b6c236f: Pull complete
+80191acfded2: Pull complete
+d41d63fc76cc: Pull complete
+5605b8c2e9f7: Pull complete
+e8b16825b485: Pull complete
+3d40ccce1309: Pull complete
+Digest: sha256:51f6fdbfc622d91e276ade7e6cf6491aa36ff2bd9b158dadb732f9e4a05f33ad
+Status: Downloaded newer image for mongo:latest
+Creating shimmer_mongo_1 ... done
+Creating shimmer_resourceserver_1 ... done
+(base) Liams-MacBook-Pro-2:shimmer liam$ docker-compose up -d
+Pulling console (openmhealth/shimmer-console:)...
+latest: Pulling from openmhealth/shimmer-console
+ab14e39f58e6: Pull complete
+3db393eaf401: Pull complete
+109332d70789: Pull complete
+070546b861c8: Pull complete
+e9f95c6434ac: Pull complete
+a0c8d75fe790: Pull complete
+Digest: sha256:731a56eca78d0aaec447c096eb3485d21bc29eedb307e0a21ac63fef18f29292
+Status: Downloaded newer image for openmhealth/shimmer-console:latest
+shimmer_mongo_1 is up-to-date
+shimmer_resourceserver_1 is up-to-date
+
+// Below is just me playing around with the code and docker, trying to figure out certain functions
+
+Creating shimmer_console_1 ... done
+(base) Liams-MacBook-Pro-2:shimmer liam$ docker ps
+CONTAINER ID   IMAGE                                 COMMAND                  CREATED          STATUS          PORTS                            NAMES
+3500509d2893   openmhealth/shimmer-console           "nginx -g 'daemon of…"   51 minutes ago   Up 50 minutes   80/tcp, 0.0.0.0:8083->8083/tcp   shimmer_console_1
+5cd9e210f31a   openmhealth/shimmer-resource-server   "/bin/sh -c '/usr/bi…"   52 minutes ago   Up 52 minutes   0.0.0.0:8084->8083/tcp           shimmer_resourceserver_1
+2e5b5989547d   mongo                                 "docker-entrypoint.s…"   52 minutes ago   Up 52 minutes   27017/tcp                        shimmer_mongo_1
+9d6692c1416e   docker/getting-started                "nginx -g 'daemon of…"   26 hours ago     Up 26 hours     0.0.0.0:80->80/tcp               awesome_bassi
+
+// Removing awesome_bassi because it is unnessesairy and irrelevant for the OmH stuff
+
+(base) Liams-MacBook-Pro-2:shimmer liam$ docker rm awesome_bassi
+Error response from daemon: You cannot remove a running container 9d6692c1416ec3018f6229c3eeeb89626e00d2deebdefa600bd26ec62bddaa3c. Stop the container before attempting removal or force remove
+(base) Liams-MacBook-Pro-2:shimmer liam$ docker stop awesome_bassi
+awesome_bassi
+(base) Liams-MacBook-Pro-2:shimmer liam$ docker rm awesome_bassi
+awesome_bassi
+(base) Liams-MacBook-Pro-2:shimmer liam$ docker ps
+CONTAINER ID   IMAGE                                 COMMAND                  CREATED          STATUS          PORTS                            NAMES
+3500509d2893   openmhealth/shimmer-console           "nginx -g 'daemon of…"   53 minutes ago   Up 53 minutes   80/tcp, 0.0.0.0:8083->8083/tcp   shimmer_console_1
+5cd9e210f31a   openmhealth/shimmer-resource-server   "/bin/sh -c '/usr/bi…"   54 minutes ago   Up 54 minutes   0.0.0.0:8084->8083/tcp           shimmer_resourceserver_1
+2e5b5989547d   mongo                                 "docker-entrypoint.s…"   54 minutes ago   Up 54 minutes   27017/tcp                        shimmer_mongo_1
+(base) Liams-MacBook-Pro-2:shimmer liam$ docker ps -a
+CONTAINER ID   IMAGE                                 COMMAND                  CREATED          STATUS          PORTS                            NAMES
+3500509d2893   openmhealth/shimmer-console           "nginx -g 'daemon of…"   53 minutes ago   Up 53 minutes   80/tcp, 0.0.0.0:8083->8083/tcp   shimmer_console_1
+5cd9e210f31a   openmhealth/shimmer-resource-server   "/bin/sh -c '/usr/bi…"   54 minutes ago   Up 54 minutes   0.0.0.0:8084->8083/tcp           shimmer_resourceserver_1
+2e5b5989547d   mongo                                 "docker-entrypoint.s…"   54 minutes ago   Up 54 minutes   27017/tcp                        shimmer_mongo_1
+
+// Below I am trying to open the console in a browser
+// Had some trouble figuring out how to do this as I was a bit confused but eventually I figured it out
+// This can be found somewhere below
+
+(base) Liams-MacBook-Pro-2:shimmer liam$ docker run -p 8083:8083 --name omh-test -d mongo
+2efa41576040c60ac83166781eec8e44143223c6980452b5950f6d9949b363b4
+docker: Error response from daemon: driver failed programming external connectivity on endpoint omh-test (d6d05e56d0f0b999d403bef751f73f3a286351d0425b7935489f08c3823c1744): Bind for 0.0.0.0:8083 failed: port is already allocated.
+(base) Liams-MacBook-Pro-2:shimmer liam$ docker run -p 8080:80 --name omh-test -d mongo
+docker: Error response from daemon: Conflict. The container name "/omh-test" is already in use by container "2efa41576040c60ac83166781eec8e44143223c6980452b5950f6d9949b363b4". You have to remove (or rename) that container to be able to reuse that name.
+See 'docker run --help'.
+(base) Liams-MacBook-Pro-2:shimmer liam$ docker run -p 8080:80 --name omh-test1 -d mongo
+325aa6856247f785955b4dd8a8697a95f39f96b4aabc79436ae25957fbb29c08
+(base) Liams-MacBook-Pro-2:shimmer liam$ docker ps
+CONTAINER ID   IMAGE                                 COMMAND                  CREATED          STATUS          PORTS                             NAMES
+325aa6856247   mongo                                 "docker-entrypoint.s…"   26 seconds ago   Up 23 seconds   27017/tcp, 0.0.0.0:8080->80/tcp   omh-test1
+3500509d2893   openmhealth/shimmer-console           "nginx -g 'daemon of…"   47 hours ago     Up 47 hours     80/tcp, 0.0.0.0:8083->8083/tcp    shimmer_console_1
+5cd9e210f31a   openmhealth/shimmer-resource-server   "/bin/sh -c '/usr/bi…"   47 hours ago     Up 47 hours     0.0.0.0:8084->8083/tcp            shimmer_resourceserver_1
+2e5b5989547d   mongo                                 "docker-entrypoint.s…"   47 hours ago     Up 47 hours     27017/tcp                         shimmer_mongo_1
+(base) Liams-MacBook-Pro-2:shimmer liam$ docker start omh-test1
+omh-test1
+
+// Not entirely sure what is going on below here, I think I was trying commands from an online tutorial
+
+(base) Liams-MacBook-Pro-2:shimmer liam$ docker logs omh-test1
+{"t":{"$date":"2021-03-11T14:41:54.393+00:00"},"s":"I",  "c":"CONTROL",  "id":23285,   "ctx":"main","msg":"Automatically disabling TLS 1.0, to force-enable TLS 1.0 specify --sslDisabledProtocols 'none'"}
+{"t":{"$date":"2021-03-11T14:41:54.430+00:00"},"s":"W",  "c":"ASIO",     "id":22601,   "ctx":"main","msg":"No TransportLayer configured during NetworkInterface startup"}
+{"t":{"$date":"2021-03-11T14:41:54.438+00:00"},"s":"I",  "c":"NETWORK",  "id":4648601, "ctx":"main","msg":"Implicit TCP FastOpen unavailable. If TCP FastOpen is required, set tcpFastOpenServer, tcpFastOpenClient, and tcpFastOpenQueueSize."}
+{"t":{"$date":"2021-03-11T14:41:54.448+00:00"},"s":"I",  "c":"STORAGE",  "id":4615611, "ctx":"initandlisten","msg":"MongoDB starting","attr":{"pid":1,"port":27017,"dbPath":"/data/db","architecture":"64-bit","host":"325aa6856247"}}
+{"t":{"$date":"2021-03-11T14:41:54.448+00:00"},"s":"I",  "c":"CONTROL",  "id":23403,   "ctx":"initandlisten","msg":"Build Info","attr":{"buildInfo":{"version":"4.4.4","gitVersion":"8db30a63db1a9d84bdcad0c83369623f708e0397","openSSLVersion":"OpenSSL 1.1.1  11 Sep 2018","modules":[],"allocator":"tcmalloc","environment":{"distmod":"ubuntu1804","distarch":"x86_64","target_arch":"x86_64"}}}}
+{"t":{"$date":"2021-03-11T14:41:54.448+00:00"},"s":"I",  "c":"CONTROL",  "id":51765,   "ctx":"initandlisten","msg":"Operating System","attr":{"os":{"name":"Ubuntu","version":"18.04"}}}
+{"t":{"$date":"2021-03-11T14:41:54.448+00:00"},"s":"I",  "c":"CONTROL",  "id":21951,   "ctx":"initandlisten","msg":"Options set by command line","attr":{"options":{"net":{"bindIp":"*"}}}}
+{"t":{"$date":"2021-03-11T14:41:54.452+00:00"},"s":"I",  "c":"STORAGE",  "id":22297,   "ctx":"initandlisten","msg":"Using the XFS filesystem is strongly recommended with the WiredTiger storage engine. See http://dochub.mongodb.org/core/prodnotes-filesystem","tags":["startupWarnings"]}
+{"t":{"$date":"2021-03-11T14:41:54.453+00:00"},"s":"I",  "c":"STORAGE",  "id":22315,   "ctx":"initandlisten","msg":"Opening WiredTiger","attr":{"config":"create,cache_size=483M,session_max=33000,eviction=(threads_min=4,threads_max=4),config_base=false,statistics=(fast),log=(enabled=true,archive=true,path=journal,compressor=snappy),file_manager=(close_idle_time=100000,close_scan_interval=10,close_handle_minimum=250),statistics_log=(wait=0),verbose=[recovery_progress,checkpoint_progress,compact_progress],"}}
+{"t":{"$date":"2021-03-11T14:41:55.229+00:00"},"s":"I",  "c":"STORAGE",  "id":22430,   "ctx":"initandlisten","msg":"WiredTiger message","attr":{"message":"[1615473715:229333][1:0x7fdf7b91cac0], txn-recover: [WT_VERB_RECOVERY | WT_VERB_RECOVERY_PROGRESS] Set global recovery timestamp: (0, 0)"}}
+{"t":{"$date":"2021-03-11T14:41:55.229+00:00"},"s":"I",  "c":"STORAGE",  "id":22430,   "ctx":"initandlisten","msg":"WiredTiger message","attr":{"message":"[1615473715:229434][1:0x7fdf7b91cac0], txn-recover: [WT_VERB_RECOVERY | WT_VERB_RECOVERY_PROGRESS] Set global oldest timestamp: (0, 0)"}}
+{"t":{"$date":"2021-03-11T14:41:55.239+00:00"},"s":"I",  "c":"STORAGE",  "id":4795906, "ctx":"initandlisten","msg":"WiredTiger opened","attr":{"durationMillis":786}}
+{"t":{"$date":"2021-03-11T14:41:55.239+00:00"},"s":"I",  "c":"RECOVERY", "id":23987,   "ctx":"initandlisten","msg":"WiredTiger recoveryTimestamp","attr":{"recoveryTimestamp":{"$timestamp":{"t":0,"i":0}}}}
+{"t":{"$date":"2021-03-11T14:41:55.261+00:00"},"s":"I",  "c":"STORAGE",  "id":4366408, "ctx":"initandlisten","msg":"No table logging settings modifications are required for existing WiredTiger tables","attr":{"loggingEnabled":true}}
+{"t":{"$date":"2021-03-11T14:41:55.262+00:00"},"s":"I",  "c":"STORAGE",  "id":22262,   "ctx":"initandlisten","msg":"Timestamp monitor starting"}
+{"t":{"$date":"2021-03-11T14:41:55.269+00:00"},"s":"W",  "c":"CONTROL",  "id":22120,   "ctx":"initandlisten","msg":"Access control is not enabled for the database. Read and write access to data and configuration is unrestricted","tags":["startupWarnings"]}
+{"t":{"$date":"2021-03-11T14:41:55.282+00:00"},"s":"I",  "c":"STORAGE",  "id":20320,   "ctx":"initandlisten","msg":"createCollection","attr":{"namespace":"admin.system.version","uuidDisposition":"provided","uuid":{"uuid":{"$uuid":"1d52264e-7514-405b-bb59-2d3b682130e2"}},"options":{"uuid":{"$uuid":"1d52264e-7514-405b-bb59-2d3b682130e2"}}}}
+{"t":{"$date":"2021-03-11T14:41:55.297+00:00"},"s":"I",  "c":"INDEX",    "id":20345,   "ctx":"initandlisten","msg":"Index build: done building","attr":{"buildUUID":null,"namespace":"admin.system.version","index":"_id_","commitTimestamp":{"$timestamp":{"t":0,"i":0}}}}
+{"t":{"$date":"2021-03-11T14:41:55.298+00:00"},"s":"I",  "c":"COMMAND",  "id":20459,   "ctx":"initandlisten","msg":"Setting featureCompatibilityVersion","attr":{"newVersion":"4.4"}}
+{"t":{"$date":"2021-03-11T14:41:55.301+00:00"},"s":"I",  "c":"STORAGE",  "id":20536,   "ctx":"initandlisten","msg":"Flow Control is enabled on this deployment"}
+{"t":{"$date":"2021-03-11T14:41:55.303+00:00"},"s":"I",  "c":"STORAGE",  "id":20320,   "ctx":"initandlisten","msg":"createCollection","attr":{"namespace":"local.startup_log","uuidDisposition":"generated","uuid":{"uuid":{"$uuid":"27b6dd8a-afbd-461f-ba95-e26aef087427"}},"options":{"capped":true,"size":10485760}}}
+{"t":{"$date":"2021-03-11T14:41:55.318+00:00"},"s":"I",  "c":"INDEX",    "id":20345,   "ctx":"initandlisten","msg":"Index build: done building","attr":{"buildUUID":null,"namespace":"local.startup_log","index":"_id_","commitTimestamp":{"$timestamp":{"t":0,"i":0}}}}
+{"t":{"$date":"2021-03-11T14:41:55.319+00:00"},"s":"I",  "c":"FTDC",     "id":20625,   "ctx":"initandlisten","msg":"Initializing full-time diagnostic data capture","attr":{"dataDirectory":"/data/db/diagnostic.data"}}
+{"t":{"$date":"2021-03-11T14:41:55.323+00:00"},"s":"I",  "c":"NETWORK",  "id":23015,   "ctx":"listener","msg":"Listening on","attr":{"address":"/tmp/mongodb-27017.sock"}}
+{"t":{"$date":"2021-03-11T14:41:55.326+00:00"},"s":"I",  "c":"NETWORK",  "id":23015,   "ctx":"listener","msg":"Listening on","attr":{"address":"0.0.0.0"}}
+{"t":{"$date":"2021-03-11T14:41:55.326+00:00"},"s":"I",  "c":"NETWORK",  "id":23016,   "ctx":"listener","msg":"Waiting for connections","attr":{"port":27017,"ssl":"off"}}
+{"t":{"$date":"2021-03-11T14:41:55.345+00:00"},"s":"I",  "c":"CONTROL",  "id":20712,   "ctx":"LogicalSessionCacheReap","msg":"Sessions collection is not set up; waiting until next sessions reap interval","attr":{"error":"NamespaceNotFound: config.system.sessions does not exist"}}
+{"t":{"$date":"2021-03-11T14:41:55.345+00:00"},"s":"I",  "c":"STORAGE",  "id":20320,   "ctx":"LogicalSessionCacheRefresh","msg":"createCollection","attr":{"namespace":"config.system.sessions","uuidDisposition":"generated","uuid":{"uuid":{"$uuid":"84d8f7d8-0835-4c89-9e59-5b5ddf1cb027"}},"options":{}}}
+{"t":{"$date":"2021-03-11T14:41:55.384+00:00"},"s":"I",  "c":"INDEX",    "id":20345,   "ctx":"LogicalSessionCacheRefresh","msg":"Index build: done building","attr":{"buildUUID":null,"namespace":"config.system.sessions","index":"_id_","commitTimestamp":{"$timestamp":{"t":0,"i":0}}}}
+{"t":{"$date":"2021-03-11T14:41:55.384+00:00"},"s":"I",  "c":"INDEX",    "id":20345,   "ctx":"LogicalSessionCacheRefresh","msg":"Index build: done building","attr":{"buildUUID":null,"namespace":"config.system.sessions","index":"lsidTTLIndex","commitTimestamp":{"$timestamp":{"t":0,"i":0}}}}
+(base) Liams-MacBook-Pro-2:shimmer liam$ undo
+-bash: undo: command not found
+(base) Liams-MacBook-Pro-2:shimmer liam$ docker stop omh-test1
+omh-test1
+(base) Liams-MacBook-Pro-2:shimmer liam$ docker rm omh-test1
+omh-test1
+(base) Liams-MacBook-Pro-2:shimmer liam$ 
