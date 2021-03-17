@@ -1,5 +1,8 @@
 // Copied and pasted from terminal
 
+// Logged into my Docker account
+// Ran Docker getting started command -> Docker said to copy & paste in terminal, probably wasn't necessary for what I was working on
+
 Last login: Mon Mar  8 10:31:13 on ttys000
 (base) Liams-MacBook-Pro-2:~ liam$ docker login -u
 flag needs an argument: 'u' in -u
@@ -7,8 +10,14 @@ flag needs an argument: 'u' in -u
 Password: 
 Login Succeeded
 (base) Liams-MacBook-Pro-2:~ liam$ docker run -d -p 80:80 docker/getting-started
+
+// Cloned Shimmer from OmH Github repo, had already done this before, hence 'already exists'
+
 (base) Liams-MacBook-Pro-2:~ liam$ git clone https://github.com/openmhealth/shimmer.git omh-clone
 fatal: destination path 'omh-clone' already exists and is not an empty directory.
+
+// Step 2 of Installation from OmH Github steps said to run this command. This is where I got stuck originally.
+
 (base) Liams-MacBook-Pro-2:~ liam$ docker-compose up -d
 ERROR: 
         Can't find a suitable configuration file in this directory or any
